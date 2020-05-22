@@ -15,6 +15,7 @@ class DynamicWeatherForecastTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final queryData = MediaQuery.of(context);
     return StreamBuilder(
       stream: getForecastStream,
       builder: (BuildContext context, AsyncSnapshot<WeatherForecast> snapshot)
@@ -23,8 +24,12 @@ class DynamicWeatherForecastTable extends StatelessWidget {
         return Column(
           children: <Widget>[
               DataTable(
+                dataRowHeight: queryData.size.height / 14,
+                columnSpacing: queryData.size.width / 16,
                 columns: _createTableHeader(),
-                rows: snapshot.data.forecast.map(_createOneRow).toList(),
+                rows: snapshot.data.forecast.map((forecast) {
+                  return _createOneRow(forecast, queryData.size.width / 6);
+                }).toList(),
               ),
             _createProviderText(snapshot.data.provider),
           ],
@@ -45,15 +50,15 @@ class DynamicWeatherForecastTable extends StatelessWidget {
     }).toList();
   }
 
-  DataRow _createOneRow(OneDayForecast forecast) {
+  DataRow _createOneRow(OneDayForecast forecast, double width) {
     final List<String> texts = [
       DateFormat('MM/dd').format(DateTime.parse(forecast.date)),
-      (forecast.precipProbability * 100).toStringAsFixed(0) + '%',
-      forecast.temperatureHigh.toStringAsFixed(1),
-      forecast.temperatureLow.toStringAsFixed(1),
+      (forecast.precipProbability * 100).toStringAsFixed(0) + ' %',
+      forecast.temperatureHigh.toStringAsFixed(0) + ' °C',
+      forecast.temperatureLow.toStringAsFixed(0) + ' °C',
     ];
     return DataRow(
-        cells: texts.map((text) => DataCell(Text(text))).toList()
+        cells: texts.map((text) => DataCell(Container(width: width, child: Text(text)))).toList()
     );
   }
 
