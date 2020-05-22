@@ -14,7 +14,7 @@ class ApiProvider {
     final http.Response response = await http.get(url);
     final String responseBody = utf8.decode(response.bodyBytes);
 
-    final List jsonList = json.decode(responseBody);
+    final List jsonList = jsonDecode(responseBody);
     final List subdivisions = jsonList.map((j) => Subdivision.fromJson(j)).toList();
     subdivisions.sort();
     return subdivisions;
@@ -25,7 +25,7 @@ class ApiProvider {
     final http.Response response = await http.get(url);
     final String responseBody = utf8.decode(response.bodyBytes);
 
-    final List jsonList = json.decode(responseBody);
+    final List jsonList = jsonDecode(responseBody);
     final List cities = jsonList.map((j) => City.fromJson(j)).toList();
     cities.sort();
     return cities;
@@ -36,7 +36,7 @@ class ApiProvider {
     final http.Response response = await http.get(url);
     final String responseBody = utf8.decode(response.bodyBytes);
 
-    final Map jsonMap = json.decode(responseBody);
+    final Map jsonMap = jsonDecode(responseBody);
     final weatherForecast = WeatherForecast.fromJson(jsonMap);
     weatherForecast.forecast.sort();
     return weatherForecast;

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'api_provider.dart';
@@ -33,33 +35,55 @@ class Bloc {
   Stream<WeatherForecast> get getForecast => _resultForecastController.stream;
 
   Bloc() {
-    _outRequestCities.listen((Subdivision subdivision) {
-      changeCity.add(null);
-      _inResultForecast.add(null);
-      _requestCities(subdivision);
-    });
+    _outRequestCities.listen(_requestCities);
 
     _outRequestForecast.listen(_requestForecast);
 
     _requestSubdivisions();
+
+    _loadSharedPreferences();
   }
 
-  void _requestSubdivisions() async {
+  Future<void> _loadSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey('subdivision')) {
+      final subdivisionJson = jsonDecode(prefs.getString('subdivision'));
+      final subdivision = Subdivision.fromJson(subdivisionJson);
+      changeSubdivision.add(subdivision);
+      requestCities.add(subdivision);
+
+      if (prefs.containsKey('city')) {
+        final cityJson = jsonDecode(prefs.getString('city'));
+        final city = City.fromJson(cityJson);
+        changeCity.add(city);
+        requestForecast.add(city);
+      }
+    }
+  }
+
+  void _requestSubdivisions() {
     apiProvider.getSubdivisions()
         .then(_inResultSubdivisions.add)
         .catchError((err) => _inResultSubdivisions.addError('Failed to get subdivisions'));
   }
 
-  void _requestCities(Subdivision subdivision) async {
+  Future<void> _requestCities(Subdivision subdivision) async {
     apiProvider.getCities(subdivision.id)
         .then(_inResultCities.add)
         .catchError((err) => _inResultCities.addError('Failed to get cities'));
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('subdivision', jsonEncode(subdivision.toJson()));
   }
 
-  void _requestForecast(City city) async {
+  Future<void> _requestForecast(City city) async {
     apiProvider.getForecast(city.id)
         .then(_inResultForecast.add)
         .catchError((err) => _inResultForecast.addError('Failed to get forecast'));
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('city', jsonEncode(city.toJson()));
   }
 
   void dispose() {

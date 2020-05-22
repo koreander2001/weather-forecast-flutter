@@ -33,6 +33,7 @@ dependencies:
   intl: ^0.16.1
   flutter_dotenv: ^2.1.0
   json_annotation: ^3.0.1
+  shared_preferences: ^0.5.7+3
 
 dev_dependencies:
   flutter_test:

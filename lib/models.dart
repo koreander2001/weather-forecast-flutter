@@ -18,6 +18,9 @@ class Subdivision implements Comparable<Subdivision> {
   String toString() => localName;
 
   @override
+  bool operator ==(other) => id == other.id;
+
+  @override
   int compareTo(Subdivision other) => id.compareTo(other.id);
 
   factory Subdivision.fromJson(Map<String, dynamic> json) => _$SubdivisionFromJson(json);
@@ -39,6 +42,9 @@ class City implements Comparable<City> {
 
   @override
   String toString() => localName;
+
+  @override
+  bool operator ==(other) => id == other.id;
 
   @override
   int compareTo(City other) => id.compareTo(other.id);
