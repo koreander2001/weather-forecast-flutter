@@ -1,39 +1,57 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'models.g.dart';
+
+@JsonSerializable()
 class Subdivision implements Comparable<Subdivision> {
+
   final String id;
+
   final String name;
+
+  @JsonKey(name: 'local_name')
   final String localName;
 
-  Subdivision.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        localName = json['local_name'];
+  Subdivision(this.id, this.name, this.localName);
 
   @override
   String toString() => localName;
 
   @override
   int compareTo(Subdivision other) => id.compareTo(other.id);
+
+  factory Subdivision.fromJson(Map<String, dynamic> json) => _$SubdivisionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubdivisionToJson(this);
 }
 
+@JsonSerializable()
 class City implements Comparable<City> {
+
   final String id;
+
   final String name;
+
+  @JsonKey(name: 'local_name')
   final String localName;
 
-  City.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        localName = json['local_name'];
+  City(this.id, this.name, this.localName);
 
   @override
   String toString() => localName;
 
   @override
   int compareTo(City other) => id.compareTo(other.id);
+
+  factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CityToJson(this);
 }
 
 class WeatherForecast {
+
   final List<OneDayForecast> forecast;
+
   final ProviderLink provider;
 
   WeatherForecast.fromJson(Map<String, dynamic> json)
@@ -42,9 +60,13 @@ class WeatherForecast {
 }
 
 class OneDayForecast implements Comparable<OneDayForecast> {
+
   final String date;
+
   final double precipProbability;
+
   final double temperatureHigh;
+
   final double temperatureLow;
 
   OneDayForecast.fromJson(Map<String, dynamic> json)
@@ -58,7 +80,9 @@ class OneDayForecast implements Comparable<OneDayForecast> {
 }
 
 class ProviderLink {
+
   final String message;
+
   final String link;
 
   ProviderLink.fromJson(Map<String, dynamic> json)

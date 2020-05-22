@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
             DynamicWeatherForecastTable(
               getForecastStream: bloc.getForecast,
               widgetsWhenNoData: Container(),
-            )
+            ),
           ],
         )
     );
